@@ -1,0 +1,24 @@
+extends ./layout
+
+block contenido
+  .ancho-maximo-centrado
+    h1 Solicitudes de amistad
+
+    if solicitudes.length === 0
+      p No tenés solicitudes pendientes.
+    else
+      .grid-container
+        each solicitud in solicitudes
+          .card
+            if solicitud.foto
+              img.card-image(src=`/uploads/${solicitud.foto}`, alt="Foto de perfil")
+            else
+              .perfil-sin-foto Sin foto
+
+            .card-title= solicitud.nombre
+
+            .botones-solicitud
+              form(action=`/seguidores/aceptar/${solicitud.id_perfil}`, method="post", style="display:inline")
+                button.btn-aceptar(type="submit") + Aceptar
+              form(action=`/seguidores/rechazar/${solicitud.id_perfil}`, method="post", style="display:inline; margin-left: 10px;")
+                button.btn-rechazar(type="submit") × Rechazar

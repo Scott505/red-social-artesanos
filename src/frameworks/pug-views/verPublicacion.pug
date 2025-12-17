@@ -1,0 +1,35 @@
+extends layout
+
+block contenido
+  .ancho-maximo-centrado
+    h1= titulo
+
+    each publicacion in publicaciones
+      .post
+        .post-header
+          strong= publicacion.nombre_perfil
+
+        .post-description
+          p= publicacion.descripcion
+
+        if publicacion.imagen
+          .post-image
+            img(src=`/uploads/${publicacion.imagen}`, alt="Imagen de la publicación")
+
+        .post-comments
+          h4 Comentarios
+          form(action="/publicar/comentarios", method="POST")
+            input(type="hidden", name="id_publicacion", value=publicacion.id_publicacion)
+            textarea(name="comentario", rows="2", placeholder="Escribe un comentario...") 
+            br
+            button(type="submit") Comentar
+            
+          if publicacion.comentarios && publicacion.comentarios.length > 0
+            ul.comments-list
+              each comentario in publicacion.comentarios
+                li
+                  strong= comentario.usuario
+                  | : 
+                  span= comentario.texto
+          else
+            p No hay comentarios aún.

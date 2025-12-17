@@ -1,0 +1,31 @@
+extends layout 
+
+block contenido
+  .ancho-maximo-centrado
+    h1 Publicar
+
+    form(action="/publicar/guardar" method="POST" enctype="multipart/form-data" class="form-publicar")
+      div.form-group
+        label(for="imagen") Imagen:
+        input(type="file" name="imagen" accept="image/*" required)
+
+      div.form-group
+        label(for="descripcion") Descripción:
+        input(type="text" name="descripcion" placeholder="Escribí una descripción..." required)
+
+      div.form-group
+        label(for="id_album") Elegir álbum:
+        select(name="id_album", disabled=!albumnes || !albumnes.length)
+          option(value="") -- Seleccioná un álbum --
+          if albumnes && albumnes.length
+            each album in albumnes
+              option(value=album.id_album)= album.titulo
+          else
+            option(value="") No hay álbumes disponibles
+
+      div.form-group
+        label(for="titulo_nuevo_album") O crear uno nuevo:
+        input(type="text" name="titulo_nuevo_album" placeholder="Nuevo álbum")
+
+      div.form-group
+        button(type="submit") Publicar

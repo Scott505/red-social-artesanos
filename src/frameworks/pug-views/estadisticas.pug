@@ -1,0 +1,32 @@
+extends layout
+
+block contenido
+  .estadisticas-container
+    h1 Estadísticas del perfil
+
+    .stats-grid
+      .stat-card
+        h2 Total de publicaciones
+        p #{estadisticas.total_publicaciones}
+
+      .stat-card
+        h2 Total de álbumes
+        p #{estadisticas.total_albumnes}
+
+      .stat-card
+        h2 Comentarios recibidos
+        p #{estadisticas.comentarios_recibidos}
+
+      .stat-card
+        h2 Comentarios realizados
+        p #{estadisticas.comentarios_realizados}
+
+      .stat-card
+        h2 Seguidores
+        p #{estadisticas.total_seguidores}
+
+      .stat-card
+        h2 Seguidos
+        p #{estadisticas.total_seguidos}
+
+    a.btn-volver(href=`/perfil/id/${user.id_perfil}`) Volver al perfil
