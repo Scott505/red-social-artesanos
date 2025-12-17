@@ -2,12 +2,14 @@ export const crearPublicacionConAlbum = async ({
   publicacionesRepo,
   albumRepo,
   albumPublicacionRepo,
+  publicacionEtiquetasRepo,
   transaction,
   id_perfil,
   descripcion,
   imagen,
   id_album,
   titulo_nuevo_album,
+  etiquetas
 }) => {
   let id_album_final = id_album;
 
@@ -33,14 +35,16 @@ export const crearPublicacionConAlbum = async ({
       { transaction }
     );
   }
-   
-  /*console.log('Publicación creada:', {
-    id_publicacion: publicacion.id_publicacion,
-    descripcion,
-    imagen,
-    id_perfil,
-    id_album: id_album_final,
-  });*/
-  
+//asociar etiquetas
+  if (etiquetas && etiquetas.length > 0) {
+    for (const id_interes of etiquetas) {
+      await publicacionEtiquetasRepo.create({
+        id_publicacion: publicacion.id_publicacion,
+        id_interes: parseInt(id_interes, 10)
+      }, { transaction });
+    }
+  }
+
+
   return publicacion;
 };

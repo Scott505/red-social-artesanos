@@ -15,6 +15,11 @@ block contenido
         if publicacion.imagen
           .post-image
             img(src=`/uploads/${publicacion.imagen}`, alt="Imagen de la publicación")
+        
+        if intereses && intereses.length
+          .post-intereses
+            each interes in intereses
+              span.interes-box= interes
 
         .post-comments
           h4 Comentarios

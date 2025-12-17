@@ -16,10 +16,27 @@ block contenido
       label(for="telefono") Teléfono:
       input(type="number", id="telefono", name="telefono")
 
-      label(for="experiencia") Experiencia:
-      input(type="text", id="experiencia", name="experiencia", required)
+      label(for="intereses") Intereses:
+      select#intereses(name="intereses[]" multiple required)
+        each etiqueta in etiquetas
+          option(value=etiqueta.id_interes)= etiqueta.nombre
+
 
       label(for="contrasena") Contraseña:
       input(type="password", id="contrasena", name="contrasena", required)
 
       button(type="submit") Registrar
+
+
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css")
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js")
+
+  script.
+    $(document).ready(function () {
+      $('#intereses').select2({
+        placeholder: 'Seleccioná intereses',
+        width: '100%'
+      });
+    });
+

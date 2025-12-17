@@ -33,5 +33,10 @@ block contenido
         strong Mail: 
         | #{perfil.mail || 'No disponible'}
       p
-        strong Experiencia:
-      p= perfil.experiencia || 'No disponible'
+        strong Intereses:
+      if intereses && intereses.length
+        ul.perfil-intereses
+          each nombre in intereses
+            li= nombre
+      else
+        p 'No disponible'

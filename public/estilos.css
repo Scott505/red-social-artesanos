@@ -611,3 +611,17 @@ h1 {
 .btn-volver:hover {
   background-color: #0056b3;
 }
+
+.post-intereses {
+  margin: 10px 0;
+}
+
+.interes-box {
+  display: inline-block;
+  background-color: #e0f0ff;
+  color: #007bff;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}

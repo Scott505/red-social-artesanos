@@ -1,21 +1,25 @@
 import { getSequelize } from "../../frameworks/sequelize/db/db.js";
+import * as hashService from "../../frameworks/bcrypt/hash.js";
 import { PerfilRepository } from '../repositories/PerfilRepository.js';
+import { PerfilesEtiquetasRepository } from '../repositories/PerfilesEtiquetasRepository.js';
+import { UsuarioRepository } from '../repositories/UsuarioRepository.js';
+import { SeguidoresRepository } from "../repositories/SeguidoresRepository.js";
 import { getPerfilById } from '../../usecase/perfil/getPerfilById.js';
 import { getAllPerfiles } from '../../usecase/perfil/getAllPerfiles.js';
 import { crearUsuarioConPerfil } from '../../usecase/perfil/crearUsuarioConPerfil.js';
-import { UsuarioRepository } from '../repositories/UsuarioRepository.js';
 import { manejadorDeTransacciones } from "../../usecase/manejadorDeTransacciones.js";
-import * as hashService from "../../frameworks/bcrypt/hash.js";
 import { ingresar } from '../../usecase/perfil/ingresar.js';
-import { SeguidoresRepository } from "../repositories/SeguidoresRepository.js";
 import { cerrarSesion } from '../../usecase/perfil/cerrarSesion.js';
 import { obtenerEstadisticasPerfil } from "../../usecase/perfil/obtenerEstadisticasPerfil.js";
+import { getInteresesPerfil } from "../../usecase/etiquetas/getInteresesPerfil.js";
+
 
 
 
 // Controlador para manejar la solicitud de obtener una persona por ID
 export const getPerfilByIdController = async (req, res) => {
   const perfilRepository = new PerfilRepository();
+  const perfilesEtiquetasRepo = new PerfilesEtiquetasRepository();
   try {
     //Busca la elperfil por el id
     const id = req.params.id;
@@ -24,12 +28,15 @@ export const getPerfilByIdController = async (req, res) => {
     if (!perfil) {
       return res.status(404).json({ error: 'Persona no encontrada' });
     }
+    
+    const intereses = await getInteresesPerfil(perfil.id_perfil, perfilesEtiquetasRepo);
 
     const mensajeExito = req.session.mensajeExito;
     delete req.session.mensajeExito;
 
     res.render('perfil', {
       perfil,
+      intereses,
       titulo: `Perfil de ${perfil.nombre}`,
       mensajeExito
     });
@@ -88,11 +95,10 @@ export const crearUsuarioController = async (req, res) => {
   const sequelize = getSequelize();
   const usuarioRepo = new UsuarioRepository();
   const perfilRepo = new PerfilRepository();
+  const perfilesEtiquetasRepo = new PerfilesEtiquetasRepository();
 
-  const { nombre, mail, contrasena, telefono, experiencia } = req.body;
+  const { nombre, mail, contrasena, telefono, experiencia, intereses } = req.body;
   const foto = req.file?.filename;
-  //console.log("Foto subida:", foto);
-  //console.log("Datos recibidos:", req.body);
 
   //Verifica campos
   if (!mail || !contrasena) {
@@ -106,8 +112,10 @@ export const crearUsuarioController = async (req, res) => {
         return await crearUsuarioConPerfil({
           usuarioRepository: usuarioRepo,
           perfilRepository: perfilRepo,
+          perfilesEtiquetasRepository: perfilesEtiquetasRepo,
           usuarioData: { username: mail, contrasena },
           perfilData: { nombre, mail, telefono, foto, experiencia },
+          intereses,
           transaction,
           hashService,
         });
@@ -125,10 +133,6 @@ export const crearUsuarioController = async (req, res) => {
 
     req.session.mensajeExito = "Usuario registrado exitosamente.";
     res.redirect(`/perfil/id/${nuevoUsuario.perfil.id_perfil}`);
-
-
-
-
 
   } catch (error) {
     console.error(error);

@@ -1,20 +1,26 @@
-import { crearPublicacionConAlbum } from '../../usecase/publicaciones/crearPublicacionConAlbum.js';
+import { getSequelize } from '../../frameworks/sequelize/db/db.js';
+//Repository's
 import { PublicacionesRepository } from '../repositories/PublicacionesRepository.js';
 import { AlbumRepository } from '../repositories/AlbumRepository.js';
 import { AlbumPublicacionRepository } from '../repositories/AlbumPublicacionRepository.js';
-import { manejadorDeTransacciones } from '../../usecase/manejadorDeTransacciones.js';
-import { getSequelize } from '../../frameworks/sequelize/db/db.js';
-import { getPublicacionConComentarios } from '../../usecase/publicaciones/getPublicacionConComentarios.js';
-import { ComentariosRepository } from '../repositories/ComentariosRepository.js';
 import { PerfilRepository } from '../repositories/PerfilRepository.js';
+import { ComentariosRepository } from '../repositories/ComentariosRepository.js';
+import { PublicacionEtiquetasRepository } from '../repositories/PublicacionEtiquetasRepository.js';
+//useacase
+import { manejadorDeTransacciones } from '../../usecase/manejadorDeTransacciones.js';
+import { crearPublicacionConAlbum } from '../../usecase/publicaciones/crearPublicacionConAlbum.js';
+import { getPublicacionConComentarios } from '../../usecase/publicaciones/getPublicacionConComentarios.js';
+import { getInteresesPublicacion } from '../../usecase/etiquetas/getInteresesPublicacion.js';
 
 export const crearPublicacionController = async (req, res) => {
     const sequelize = getSequelize();
     const publicacionesRepo = new PublicacionesRepository();
     const albumRepo = new AlbumRepository();
     const albumPublicacionRepo = new AlbumPublicacionRepository();
+    const publicacionEtiquetasRepo = new PublicacionEtiquetasRepository();
 
-    const { descripcion, id_album, titulo_nuevo_album } = req.body;
+
+    const { descripcion, id_album, titulo_nuevo_album, etiquetas } = req.body;
     const imagen = req.file ? req.file.filename : null;
     const id_perfil = req.session.user.id_perfil;
 
@@ -22,25 +28,22 @@ export const crearPublicacionController = async (req, res) => {
         return res.status(400).send('Faltan datos obligatorios');
     }
 
-    /*console.log('Datos de la publicación:', {        descripcion,        id_perfil,        imagen,        id_album,        titulo_nuevo_album,
-    });*/
-
     try {
         await manejadorDeTransacciones.withTransaction(sequelize, async (transaction) => {
             await crearPublicacionConAlbum({
                 publicacionesRepo,
                 albumRepo,
                 albumPublicacionRepo,
+                publicacionEtiquetasRepo,
                 transaction,
                 id_perfil,
                 descripcion,
                 imagen,
                 id_album: id_album || null,
                 titulo_nuevo_album: titulo_nuevo_album?.trim() || null,
+                etiquetas
             });
         });
-
-        //res.redirect('/publicar');
 
         res.redirect('/mostrar/albumnes/' + id_perfil);
 
@@ -57,6 +60,7 @@ export const mostrarPublicacionesController = async (req, res) => {
   const publicacionesRepo = new PublicacionesRepository();
   const comentariosRepo = new ComentariosRepository();
   const perfilesRepo = new PerfilRepository();
+  const publicacionEtiquetasRepo = new PublicacionEtiquetasRepository();
 
   try {
     const publicacion = await getPublicacionConComentarios({
@@ -70,11 +74,14 @@ export const mostrarPublicacionesController = async (req, res) => {
       return res.status(404).send('Publicación no encontrada');
     }
 
-    console.log('Publicación obtenida:', publicacion);
+    const intereses = await getInteresesPublicacion(id_publicacion, publicacionEtiquetasRepo);
+
+    //console.log('Publicación obtenida:', publicacion);
 
     res.render('verPublicacion', {
       titulo: `Publicación de ${publicacion.nombre_perfil}`,
-      publicaciones: [publicacion]
+      publicaciones: [publicacion],
+      intereses
     });
 
   } catch (error) {
