@@ -8,6 +8,10 @@ import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { estaLogueado } from '../../middlewares/estaLogueado.js';
+import { NotificacionesRepository } from '../../adapters/repositories/NotificacionesRepository.js';
+import { cargarNotificacionesMiddleware } from '../../middlewares/cargarNotificacionesMiddleware.js';
+
+
 
 export const appConfig = (app, io) => {
   const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +42,8 @@ export const appConfig = (app, io) => {
     next();
   });
 
+  app.use(cargarNotificacionesMiddleware);
+
   // Configurar Pug
   app.set('view engine', 'pug');
   app.set('views', path.join(__dirname, '../pug-views'));
@@ -64,7 +70,16 @@ export const appConfig = (app, io) => {
       }
     });
 
-    // Aquí puedes agregar más eventos de socket.io según sea necesario
+    socket.on('marcar-notificaciones', async (id_perfil) => {
+      if (!id_perfil) return;
+      try {
+        const repo = new NotificacionesRepository();
+        await repo.marcarComoLeidas(id_perfil);
+      } catch (err) {
+        console.error('Error marcando notificaciones como leídas:', err);
+      }
+    });
+
   });
 };
 

@@ -20,6 +20,7 @@ h1 {
   padding: 0.5rem 2rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
 }
 
 .nav-left, .nav-right {
@@ -624,4 +625,101 @@ h1 {
   margin: 2px;
   border-radius: 4px;
   font-size: 0.9rem;
+}
+/* NOTIFICACIONES coments*/
+/* El botón que contiene las notificaciones */
+.nav-button.notificaciones-btn {
+  position: relative; /* clave para que el dropdown se superponga */
+}
+
+/* Dropdown tipo Facebook */
+.dropdown-notificaciones {
+  position: absolute; /* se posiciona respecto al botón */
+  top: 100%;          /* justo debajo del botón */
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  z-index: 1000;
+  display: none; /* oculto por defecto */
+}
+
+/* Cada item de notificación */
+.dropdown-notificaciones {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  z-index: 1000;
+  display: none;
+}
+
+.notificacion-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+
+.notif-left {
+  margin-right: 0.5rem;
+}
+
+.notif-foto {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notif-foto.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.notificacion-item:hover {
+  background-color: #f0f2f5;
+}
+
+.notif-publicacion img.notif-miniatura {
+  width: 50px;       
+  height: 50px;      
+  object-fit: cover;  
+  border-radius: 4px; 
+  margin-left: 8px;  
+}
+
+/*Barra de busqueda*/
+
+.nav-center {
+  display: flex;
+  justify-content: center;
+  flex: 1; 
+  width: 100%;
+}
+
+.nav-search {
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #000000;
+  width: 65%;
 }

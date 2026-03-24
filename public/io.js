@@ -21,6 +21,7 @@ function manejarNuevaSolicitud(data) {
 }
 
 function manejarNuevaNotificacion(data) {
+  console.log('BTN notif:', document.querySelector('a[href="/notificaciones"]'));
   const notificacionesBtn = document.querySelector('a[href="/notificaciones"]');
   if (notificacionesBtn) {
     // Usamos la misma clase 'contador-solicitudes' para que herede tus estilos de la marca roja
@@ -36,6 +37,8 @@ function manejarNuevaNotificacion(data) {
     contador.style.display = 'inline-block';
   }
 }
+
+
 
 function mostrarToast(mensaje) {
   const toast = document.createElement('div');
@@ -70,5 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
     manejarNuevaNotificacion(data);
   });
 
-});
+  const btn = document.getElementById('btn-notificaciones');
+  const dropdown = document.getElementById('dropdown-notificaciones');
 
+  if (btn && dropdown) {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+        dropdown.style.display = 'block';
+
+        const contador = btn.querySelector('.contador-solicitudes');
+        if (contador) contador.style.display = 'none';
+
+        socket.emit('marcar-notificaciones', user.id_perfil);  
+    });
+  }
+});

@@ -13,8 +13,17 @@ html
           a.nav-button(href="/publicar") Publicar
           a.nav-button(href="/perfil/todaslaspersonas") Personas
 
+        //- Barra de búsqueda centrada
+        .nav-center
+          input.nav-search(type="text", placeholder="Buscar...")
+
         .nav-right
-          a.nav-button(href="/notificaciones") Notificaciones
+          a.nav-button.notificaciones-btn#btn-notificaciones(href="#")
+            | Notificaciones
+            if notificacionesNoLeidas > 0
+              span.contador-solicitudes #{notificacionesNoLeidas}
+          div#dropdown-notificaciones.dropdown-notificaciones
+            // ... resto de notificaciones ...
           a.nav-button(href="/seguidores/solicitudes") Solicitudes
           a.nav-perfil(href=`/perfil/id/${user.id_perfil}`)
             if user.foto
@@ -29,10 +38,10 @@ html
 
     block contenido
     block foot
+
     //-WebSocket
     script(src="/socket.io/socket.io.js")
     if user
       script.
         window.usuarioAutenticado = !{JSON.stringify(user)};
     script(src="/io.js")
-
