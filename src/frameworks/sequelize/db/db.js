@@ -1,6 +1,7 @@
 import { sequelize } from './dbConexion.js';
 import initModels from '../models/init-models.js';
 
+
 let models = null;
 
 export const initDb = async () => {

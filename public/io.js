@@ -20,6 +20,22 @@ function manejarNuevaSolicitud(data) {
   }
 }
 
+function manejarNuevaNotificacion(data) {
+  const notificacionesBtn = document.querySelector('a[href="/notificaciones"]');
+  if (notificacionesBtn) {
+    // Usamos la misma clase 'contador-solicitudes' para que herede tus estilos de la marca roja
+    let contador = notificacionesBtn.querySelector('.contador-solicitudes');
+    if (!contador) {
+      contador = document.createElement('span');
+      contador.classList.add('contador-solicitudes');
+      notificacionesBtn.appendChild(contador);
+    }
+    let actual = parseInt(contador.textContent) || 0;
+    actual += 1;
+    contador.textContent = actual;
+    contador.style.display = 'inline-block';
+  }
+}
 
 function mostrarToast(mensaje) {
   const toast = document.createElement('div');
@@ -46,8 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
     manejarNuevaSolicitud(data);
   });
 
-    socket.on('solicitud-aceptada', (data) => {
+  socket.on('solicitud-aceptada', (data) => {
     mostrarToast(data.mensaje);
+  });
+
+  socket.on('nueva-notificacion', (data) => {
+    manejarNuevaNotificacion(data);
   });
 
 });

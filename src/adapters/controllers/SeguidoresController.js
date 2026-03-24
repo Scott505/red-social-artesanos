@@ -16,7 +16,7 @@ export const seguirController = async (req, res) => {
 
     await seguir(seguidoresRepository, id_seguidor, id_seguido);
 
-    //console.log('📨 Emitiendo nueva solicitud a:', `usuario_${id_seguido}`);
+    //console.log(' Emitiendo nueva solicitud a:', `usuario_${id_seguido}`);
 
 
     const io = req.app.get('io');

@@ -5,6 +5,7 @@ import _albumnes from  "./albumnes.js";
 import _comentarios from  "./comentarios.js";
 import _compartido from  "./compartido.js";
 import _etiquetas from  "./etiquetas.js";
+import _notificaciones from  "./notificaciones.js";
 import _perfiles from  "./perfiles.js";
 import _perfiles_etiquetas from  "./perfiles_etiquetas.js";
 import _publicaciones from  "./publicaciones.js";
@@ -18,6 +19,7 @@ export default function initModels(sequelize) {
   const comentarios = _comentarios.init(sequelize, DataTypes);
   const compartido = _compartido.init(sequelize, DataTypes);
   const etiquetas = _etiquetas.init(sequelize, DataTypes);
+  const notificaciones = _notificaciones.init(sequelize, DataTypes);
   const perfiles = _perfiles.init(sequelize, DataTypes);
   const perfiles_etiquetas = _perfiles_etiquetas.init(sequelize, DataTypes);
   const publicaciones = _publicaciones.init(sequelize, DataTypes);
@@ -47,6 +49,10 @@ export default function initModels(sequelize) {
   perfiles.hasMany(comentarios, { as: "comentarios", foreignKey: "id_perfil"});
   compartido.belongsTo(perfiles, { as: "id_destinatario_perfile", foreignKey: "id_destinatario"});
   perfiles.hasMany(compartido, { as: "compartidos", foreignKey: "id_destinatario"});
+  notificaciones.belongsTo(perfiles, { as: "id_perfil_receptor_perfile", foreignKey: "id_perfil_receptor"});
+  perfiles.hasMany(notificaciones, { as: "notificaciones", foreignKey: "id_perfil_receptor"});
+  notificaciones.belongsTo(perfiles, { as: "id_perfil_emisor_perfile", foreignKey: "id_perfil_emisor"});
+  perfiles.hasMany(notificaciones, { as: "id_perfil_emisor_notificaciones", foreignKey: "id_perfil_emisor"});
   perfiles_etiquetas.belongsTo(perfiles, { as: "id_perfil_perfile", foreignKey: "id_perfil"});
   perfiles.hasMany(perfiles_etiquetas, { as: "perfiles_etiqueta", foreignKey: "id_perfil"});
   publicaciones.belongsTo(perfiles, { as: "id_perfil_perfile", foreignKey: "id_perfil"});
@@ -61,6 +67,8 @@ export default function initModels(sequelize) {
   publicaciones.hasMany(comentarios, { as: "comentarios", foreignKey: "id_publicacion"});
   compartido.belongsTo(publicaciones, { as: "id_publicacion_publicacione", foreignKey: "id_publicacion"});
   publicaciones.hasMany(compartido, { as: "compartidos", foreignKey: "id_publicacion"});
+  notificaciones.belongsTo(publicaciones, { as: "id_publicacion_publicacione", foreignKey: "id_publicacion"});
+  publicaciones.hasMany(notificaciones, { as: "notificaciones", foreignKey: "id_publicacion"});
   publicaciones_etiquetas.belongsTo(publicaciones, { as: "id_publicacion_publicacione", foreignKey: "id_publicacion"});
   publicaciones.hasMany(publicaciones_etiquetas, { as: "publicaciones_etiqueta", foreignKey: "id_publicacion"});
   perfiles.belongsTo(usuarios, { as: "id_usuario_usuario", foreignKey: "id_usuario"});
@@ -72,6 +80,7 @@ export default function initModels(sequelize) {
     comentarios,
     compartido,
     etiquetas,
+    notificaciones,
     perfiles,
     perfiles_etiquetas,
     publicaciones,
